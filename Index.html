@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bite Code - Training Station</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* ==========================================================================
+           1. CORE DESIGN SYSTEM & THEME
+           ========================================================================== */
+        :root {
+            --bg-base: #0B0B0D;
+            --bg-surface: rgba(22, 23, 26, 0.75);
+            --bg-sidebar: rgba(15, 16, 18, 0.9);
+            --bg-field: #050506;
+            --border-normal: #26272B;
+            --brand-orange: #E06928;
+            --brand-glow: rgba(224, 105, 40, 0.3);
+            --text-main: #FFFFFF;
+            --text-darker: #8A8F98;
+            --text-error: #FF4A4A;
+            --text-success: #27C93F;
+            --success-glow: rgba(39, 201, 63, 0.35);
+            
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-sans: 'Inter', sans-serif;
+            --font-code: 'Fira Code', monospace;
+            --transition-smooth: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+        body { 
+            background-color: var(--bg-base); 
+            color: var(--text-main); 
+            font-family: var(--font-sans); 
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: linear-gradient(rgba(224, 105, 40, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(224, 105, 40, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .hidden { display: none !important; }
+
+        /* Top Navbar Component */
+        .app-header-nav {
+            width: 100%;
+            height: 64px;
+            background: rgba(15, 16, 18, 0.85);
+            border-bottom: 1px solid var(--border-normal);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .nav-link-item {
+            color: var(--text-darker);
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+            cursor: pointer;
+        }
+
+        .nav-link-item:hover, .nav-link-item.active {
+            color: var(--brand-orange);
+        }
+
+        .nav-status-badge {
+            background: rgba(224, 105, 40, 0.1);
+            border: 1px solid var(--brand-glow);
+            color: var(--brand-orange);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Sign Out Viewport */
+        .signout-canvas {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .signout-card {
+            width: 100%;
+            max-width: 460px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-normal);
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+        }
+
+        .signout-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+
+        .signout-card h2 {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+        }
+
+        .signout-card p {
+            color: var(--text-darker);
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .action-btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 14px;
+            background: transparent;
+            border: 1px solid var(--border-normal);
+            color: var(--text-main);
+            border-radius: 12px;
+            font-family: var(--font-display);
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text-darker);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .btn-danger {
+            flex: 1;
+            padding: 14px;
+            background: var(--text-error);
+            border: none;
+            color: #fff;
+            border-radius: 12px;
+            font-family: var(--font-display);
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 15px rgba(255, 74, 74, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: #D63B3B;
+        }
+
+        /* Confirmation Modal Overlay */
+        .confirm-modal-blur {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(6px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .confirm-modal-blur.is-visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .confirm-dialog-box {
+            width: 100%;
+            max-width: 400px;
+            background: #111215;
+            border: 1px solid var(--border-normal);
+            border-top: 3px solid var(--brand-orange);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+            transform: scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .confirm-modal-blur.is-visible .confirm-dialog-box {
+            transform: scale(1);
+        }
+
+        .confirm-dialog-box h3 {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .confirm-dialog-box p {
+            font-size: 0.9rem;
+            color: var(--text-darker);
+            margin-bottom: 24px;
+            line-height: 1.4;
+        }
+
+        /* ==========================================================================
+           2. BRAND LOGO COMPONENT
+           ========================================================================== */
+        .brand-logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .logo-graphic-circle {
+            width: 110px;
+            height: 110px;
+            border: 3.5px solid #FFFFFF;
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000000;
+            mask: radial-gradient(circle at 98px 30px, transparent 18px, #fff 19px),
+                  radial-gradient(circle at 86px 12px, transparent 14px, #fff 15px),
+                  radial-gradient(circle at 104px 54px, transparent 14px, #fff 15px);
+            -webkit-mask: radial-gradient(circle at 96px 28px, transparent 18px, #fff 19px),
+                          radial-gradient(circle at 86px 10px, transparent 13px, #fff 14px),
+                          radial-gradient(circle at 103px 52px, transparent 13px, #fff 14px);
+        }
+
+        .logo-graphic-circle::before {
+            content: 'B';
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 3.2rem;
+            color: #FFFFFF;
+            position: absolute;
+            left: 42px;
+            top: 48%;
+            transform: translateY(-50%);
+        }
+
+        .logo-brackets {
+            position: absolute;
+            left: 8px;
+            top: 45%;
+            transform: translateY(-50%);
+            color: var(--brand-orange);
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: -1px;
+        }
+
+        .logo-binary-drift {
+            position: absolute;
+            right: 6px;
+            top: 25%;
+            font-family: monospace;
+            font-size: 0.65rem;
+            line-height: 0.85;
+            color: var(--brand-orange);
+            text-align: left;
+            opacity: 0.95;
+            font-weight: bold;
+        }
+
+        .logo-text-title {
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-top: 10px;
+            color: #FFFFFF;
+        }
+        .logo-text-title span { color: var(--brand-orange); }
+
+        .logo-slogan {
+            font-family: var(--font-display);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-darker);
+            margin-top: 4px;
+            border-left: 12px solid var(--brand-orange);
+            border-right: 12px solid var(--brand-orange);
+            padding: 0 8px;
+        }
+
+        /* Mini Navbar Version */
+        .mini-logo-row { display: flex; align-items: center; gap: 10px; }
+        .mini-circle { width: 36px; height: 36px; border: 2px solid #fff; border-radius: 50%; position: relative; background: #000; flex-shrink: 0; }
+        .mini-circle::before { content: 'B'; font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; color: #fff; position: absolute; left: 14px; top: 45%; transform: translateY(-50%); }
+        .mini-brackets { position: absolute; left: 2px; top: 43%; transform: translateY(-50%); color: var(--brand-orange); font-size: 0.55rem; font-weight: 700; }
+
+        /* ==========================================================================
+           3. PAGE 1: SIGN IN TERMINAL VIEWPORT
+           ========================================================================== */
+        .login-gateway-canvas {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-card-panel {
+            width: 100%;
+            max-width: 440px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-normal);
+            border-radius: 24px;
+            padding: 40px 30px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 40px rgba(224, 105, 40, 0.05);
+        }
+
+        .input-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+        .input-label { font-family: var(--font-display); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-darker); }
+        .input-field { width: 100%; background: var(--bg-field); border: 1px solid var(--border-normal); border-radius: 12px; padding: 15px 16px; font-family: var(--font-sans); font-size: 0.95rem; color: #fff; transition: var(--transition-smooth); }
+        .input-field:focus { border-color: var(--brand-orange); box-shadow: 0 0 12px var(--brand-glow); background: rgba(224,105,40, 0.02); }
+
+        .btn-trigger { width: 100%; padding: 16px; border: none; border-radius: 12px; font-family: var(--font-display); font-weight: 700; font-size: 1rem; cursor: pointer; background: var(--brand-orange); color: #fff; transition: var(--transition-smooth); box-shadow: 0 4px 15px var(--brand-glow); text-transform: uppercase; letter-spacing: 0.5px; }
+        .btn-trigger:hover { background: #C7561A; transform: translateY(-1px); }
+
+        /* ==========================================================================
+           4. PAGE 2: WORKSPACE APP SHELL
+           ========================================================================== */
+        .app-workspace-shell { display: flex; flex-direction: column; min-height: 100vh; width: 100%; }
+        
+        .app-body-container { display: flex; flex: 1; width: 100%; }
+
+        /* Sidebar layout */
+        .sidebar-node { width: 280px; background: var(--bg-sidebar); border-right: 1px solid var(--border-normal); padding: 30px 20px; display: flex; flex-direction: column; gap: 24px; position: sticky; top: 64px; height: calc(100vh - 64px); flex-shrink: 0; }
+        .profile-box { background: rgba(255,255,255,0.02); border: 1px solid var(--border-normal); border-radius: 16px; padding: 20px; text-align: center; }
+        
+        .avatar-frame { width: 75px; height: 75px; background: var(--bg-field); border: 2.5px solid var(--brand-orange); border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 2.3rem; box-shadow: 0 0 15px var(--brand-glow); cursor: pointer; transition: var(--transition-smooth); }
+        .avatar-frame:hover { transform: scale(1.08); border-color: #fff; }
+        .avatar-hint-text { font-size: 0.68rem; color: var(--text-darker); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 12px; }
+        
+        .avatar-dropdown-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; background: var(--bg-field); border: 1px solid var(--border-normal); border-radius: 10px; padding: 8px; margin-bottom: 12px; }
+        .avatar-choice-btn { font-size: 1.3rem; padding: 4px; background: transparent; border: none; cursor: pointer; transition: transform 0.2s; display: flex; align-items: center; justify-content: center; }
+        .avatar-choice-btn:hover { transform: scale(1.25); }
+
+        .profile-name { font-size: 1.1rem; font-weight: 600; color: #fff; }
+        .profile-badge { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 3px 10px; border-radius: 5px; display: inline-block; margin-top: 6px; border: 1px solid var(--border-normal); }
+        .profile-badge.admin-mode { color: var(--brand-orange); background: var(--brand-glow); border-color: rgba(224, 105, 40, 0.4); }
+        .profile-badge.student-mode { color: var(--text-success); background: rgba(39, 201, 63, 0.1); border-color: rgba(39, 201, 63, 0.2); }
+
+        .btn-disconnect { background: transparent; border: 1px solid var(--border-normal); color: var(--text-darker); padding: 12px; border-radius: 10px; cursor: pointer; margin-top: auto; font-family: var(--font-display); font-weight: 700; transition: var(--transition-smooth); }
+        .btn-disconnect:hover { border-color: var(--text-error); color: var(--text-error); background: rgba(255, 74, 74, 0.05); }
+
+        /* Main Feed View streams */
+        .workspace-feed-content { flex: 1; padding: 40px 50px; display: flex; flex-direction: column; align-items: center; }
+        .center-feed-wrapper { width: 100%; max-width: 960px; display: flex; flex-direction: column; }
+
+        .section-header { margin-bottom: 35px; }
+        .section-header h1 { font-family: var(--font-display); font-size: 2.2rem; letter-spacing: -0.5px; }
+        .section-header h1 span { color: var(--brand-orange); }
+        .section-header p { color: var(--text-darker); margin-top: 6px; font-size: 0.95rem; }
+
+        /* Admin Console Controls */
+        .admin-creation-panel { background: var(--bg-surface); border: 1px dashed var(--brand-orange); padding: 24px; border-radius: 16px; margin-bottom: 35px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .admin-panel-title { font-family: var(--font-display); font-size: 1rem; color: var(--brand-orange); margin-bottom: 16px; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
+        .admin-input-row { display: grid; grid-template-columns: 1fr 1.5fr auto; gap: 14px; align-items: end; }
+
+        /* ==========================================================================
+           5. GLOWY MODULE CARD BOXES
+           ========================================================================== */
+        .modules-centered-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 24px; width: 100%; margin: 0 auto; }
+        
+        .glowy-module-box { 
+            background: var(--bg-surface); 
+            border: 1px solid var(--border-normal); 
+            border-radius: 16px; 
+            padding: 28px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            min-height: 250px; 
+            backdrop-filter: blur(12px); 
+            position: relative; 
+            overflow: hidden; 
+            transition: var(--transition-smooth); 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4), 0 0 20px rgba(224, 105, 40, 0.05); 
+        }
+        .glowy-module-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--brand-orange); opacity: 0.7; }
+        .glowy-module-box:hover { transform: translateY(-4px); border-color: var(--brand-orange); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 25px var(--brand-glow); }
+        
+        .glowy-module-box.mastered-green-glow { border-color: var(--text-success) !important; box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), 0 0 30px var(--success-glow) !important; }
+        .glowy-module-box.mastered-green-glow::before { background: var(--text-success) !important; }
+        .glowy-module-box.mastered-green-glow .module-badge { color: var(--text-success); background: rgba(39, 201, 63, 0.1); border-color: rgba(39, 201, 63, 0.2); }
+        .glowy-module-box.mastered-green-glow .btn-learn-trigger { background: var(--text-success); box-shadow: 0 4px 15px rgba(39, 201, 63, 0.25); }
+        .glowy-module-box.mastered-green-glow .btn-learn-trigger:hover { background: #21A835; }
+
+        .glowy-module-box.interactive-calc-card { border-color: #3b82f6; }
+        .glowy-module-box.interactive-calc-card::before { background: #3b82f6; }
+        .glowy-module-box.interactive-calc-card .module-badge { color: #60a5fa; background: rgba(59, 130, 246, 0.12); border-color: rgba(59, 130, 246, 0.3); }
+        .glowy-module-box.interactive-calc-card .btn-learn-trigger { background: #2563eb; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); }
+        .glowy-module-box.interactive-calc-card .btn-learn-trigger:hover { background: #1d4ed8; }
+
+        .module-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .module-badge { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--brand-orange); background: rgba(224, 105, 40, 0.08); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(224, 105, 40, 0.15); }
+        .module-index { font-family: var(--font-display); font-size: 1.2rem; color: rgba(255,255,255,0.1); font-weight: 700; }
+        
+        .glowy-module-box h3 { font-size: 1.3rem; color: #fff; margin-bottom: 8px; font-family: var(--font-display); }
+        .glowy-module-box p { font-size: 0.88rem; color: var(--text-darker); line-height: 1.5; margin-bottom: 20px; }
+        
+        .btn-learn-trigger { width: 100%; padding: 12px; background: var(--brand-orange); border: none; color: #fff; font-family: var(--font-display); font-weight: 700; font-size: 0.9rem; border-radius: 10px; cursor: pointer; transition: var(--transition-smooth); display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(224, 105, 40, 0.15); text-transform: uppercase; letter-spacing: 0.5px; }
+        .btn-learn-trigger:hover { background: #C7561A; }
+        
+        .btn-admin-remove { width: 100%; padding: 8px; background: rgba(255, 74, 74, 0.04); border: 1px solid rgba(255, 74, 74, 0.2); color: var(--text-error); font-family: var(--font-display); font-weight: 700; font-size: 0.78rem; border-radius: 8px; cursor: pointer; margin-top: 10px; transition: var(--transition-smooth); text-transform: uppercase; }
+        .btn-admin-remove:hover { background: var(--text-error); color: #fff; border-color: var(--text-error); }
+
+        /* ==========================================================================
+           6. QUIZ PLAYGROUND SCREEN
+           ========================================================================== */
+        .quiz-arena-layout { flex: 1; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; width: 100%; }
+        .quiz-scroll-container { width: 100%; display: flex; flex-direction: column; gap: 28px; padding-bottom: 80px; }
+        
+        .arena-nav-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; width: 100%; }
+        .btn-return { background: transparent; border: 1px solid var(--border-normal); color: var(--text-darker); padding: 10px 18px; border-radius: 8px; cursor: pointer; font-family: var(--font-display); font-weight: 700; font-size: 0.88rem; transition: var(--transition-smooth); }
+        .btn-return:hover { border-color: var(--brand-orange); color: var(--brand-orange); }
+
+        .question-stream-card { width: 100%; background: var(--bg-surface); border: 1px solid var(--border-normal); border-radius: 20px; padding: 32px; box-shadow: 0 12px 40px rgba(0,0,0,0.4); backdrop-filter: blur(15px); }
+        .question-meta-tag { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--brand-orange); margin-bottom: 10px; display: inline-block; }
+        .question-text-prompt { font-size: 1.15rem; margin-bottom: 22px; color: #fff; line-height: 1.5; font-weight: 500; }
+        
+        .options-vertical-stack { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+        .quiz-choice-row { width: 100%; padding: 16px 22px; background: var(--bg-field); border: 1px solid var(--border-normal); border-radius: 10px; color: #fff; text-align: left; font-size: 0.95rem; cursor: pointer; transition: var(--transition-smooth); font-family: var(--font-sans); }
+        .quiz-choice-row:hover { border-color: var(--brand-orange); background: rgba(224, 105, 40, 0.03); }
+        
+        .quiz-choice-row.state-correct { background: rgba(39, 201, 63, 0.12) !important; border-color: var(--text-success) !important; color: var(--text-success) !important; font-weight: 600; }
+        .quiz-choice-row.state-wrong { background: rgba(255, 74, 74, 0.12) !important; border-color: var(--text-error) !important; color: var(--text-error) !important; }
+
+        .solution-trace-box { background: rgba(224, 105, 40, 0.06); border-left: 3px solid var(--brand-orange); padding: 16px; border-radius: 0 10px 10px 0; margin-top: 18px; font-size: 0.9rem; color: #ffb894; line-height: 1.4; }
+        .solution-trace-box strong { color: #fff; display: block; margin-bottom: 4px; font-family: var(--font-display); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px; }
+
+        /* ==========================================================================
+           7. CALCULATOR LAB MODULE VIEWPORT
+           ========================================================================== */
+        .calc-arena-layout { flex: 1; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 1000px; margin: 0 auto; }
+        .calc-workspace-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; width: 100%; margin-top: 20px; }
+        
+        .calc-editor-card, .calc-console-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-normal);
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+            backdrop-filter: blur(15px);
+        }
+
+        .calc-mode-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .calc-tab-btn {
+            flex: 1;
+            padding: 10px;
+            background: var(--bg-field);
+            border: 1px solid var(--border-normal);
+            color: var(--text-darker);
+            border-radius: 8px;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .calc-tab-btn.active {
+            background: rgba(224, 105, 40, 0.15);
+            border-color: var(--brand-orange);
+            color: var(--brand-orange);
+        }
+
+        .code-textarea {
+            width: 100%;
+            height: 280px;
+            background: #050507;
+            border: 1px solid var(--border-normal);
+            border-radius: 10px;
+            padding: 16px;
+            color: #27C93F;
+            font-family: var(--font-code);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            resize: vertical;
+        }
+
+        .code-textarea:focus {
+            border-color: var(--brand-orange);
+        }
+
+        .calc-inputs-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .calc-input-box {
+            background: var(--bg-field);
+            border: 1px solid var(--border-normal);
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: #fff;
+            font-family: var(--font-code);
+            font-size: 0.9rem;
+        }
+
+        .terminal-output-box {
+            width: 100%;
+            height: 200px;
+            background: #020203;
+            border: 1px solid var(--border-normal);
+            border-radius: 10px;
+            padding: 16px;
+            color: #fff;
+            font-family: var(--font-code);
+            font-size: 0.85rem;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .calc-keypad-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .calc-key-btn {
+            padding: 12px;
+            background: var(--bg-field);
+            border: 1px solid var(--border-normal);
+            color: #fff;
+            border-radius: 8px;
+            font-family: var(--font-code);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .calc-key-btn:hover {
+            border-color: var(--brand-orange);
+            background: rgba(224, 105, 40, 0.1);
+        }
+
+        .calc-key-btn.operator { color: var(--brand-orange); }
+
+        /* ==========================================================================
+           8. ASSESSMENT RESULT DRAWER SLIDEOUT PANEL
+           ========================================================================== */
+        .drawer-dimmer-blur { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 998; opacity: 0; pointer-events: none; transition: opacity 0.35s ease; }
+        .drawer-dimmer-blur.is-visible { opacity: 1; pointer-events: auto; }
+
+        .result-slide-drawer { position: fixed; bottom: 0; left: 50%; transform: translate(-50%, 100%); width: 100%; max-width: 580px; background: #111215; border-top: 3px solid var(--brand-orange); border-radius: 24px 24px 0 0; padding: 35px 30px 45px; box-shadow: 0 -15px 50px rgba(0, 0, 0, 0.8); z-index: 999; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); text-align: center; border-left: 1px solid var(--border-normal); border-right: 1px solid var(--border-normal); }
+        .result-slide-drawer.is-visible { transform: translate(-50%, 0); }
+        
+        .drawer-score-ring { width: 95px; height: 95px; border-radius: 50%; border: 3px solid var(--brand-orange); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-family: var(--font-display); font-weight: 700; margin: 0 auto 20px; background: var(--brand-glow); box-shadow: 0 0 25px var(--brand-glow); color: #fff; }
+        .drawer-score-ring.perfect-score { border-color: var(--text-success); background: rgba(39, 201, 63, 0.15); box-shadow: 0 0 25px var(--success-glow); color: var(--text-success); }
+
+        .result-slide-drawer h3 { font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 8px; color: #fff; }
+        .result-slide-drawer p { font-size: 0.92rem; color: var(--text-darker); margin-bottom: 24px; line-height: 1.4; }
+
+        /* Toast notifications system */
+        .toast-popup-tray { position: fixed; top: 24px; right: 24px; z-index: 3000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast-banner { background: #16171a; border-left: 4px solid var(--brand-orange); color: #fff; padding: 14px 20px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); font-size: 0.9rem; font-weight: 500; transform: translateX(120%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid var(--border-normal); display: flex; align-items: center; gap: 8px; }
+        .toast-banner.show { transform: translateX(0); }
+    </style>
+</head>
+<body>
+
+    <div class="toast-popup-tray" id="toastTray"></div>
+
+    <!-- CONFIRMATION MODAL BEFORE SIGNING OUT -->
+    <div class="confirm-modal-blur" id="signOutConfirmModal">
+        <div class="confirm-dialog-box">
+            <h3>Sign Out Terminal?</h3>
+            <p>Are you sure you want to end your current session? Unsaved active progress will be secured.</p>
+            <div class="action-btn-group">
+                <button class="btn-secondary" onclick="closeSignOutConfirmation()">Cancel</button>
+                <button class="btn-danger" onclick="proceedToSignOutView()">Sign Out</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+       VIEW SHIFT 1: ACCESS LOGIN GATEWAY PORTAL
+       ========================================================================== -->
+    <div class="login-gateway-canvas" id="viewLoginGateway">
+        <div class="login-card-panel">
+            
+            <div class="brand-logo-container">
+                <div class="logo-graphic-circle">
+                    <div class="logo-brackets">&lt;/&gt;</div>
+                    <div class="logo-binary-drift">0 1 1<br>1 0 0<br>0 0 1<br>1 0 1<br>0</div>
+                </div>
+                <div class="logo-text-title">Bite <span>Code</span></div>
+                <div class="logo-slogan"></div>
+            </div>
+
+            <form style="margin-top: 10px;" onsubmit="executeProfileAuthentication(event)">
+                <div class="input-group">
+                    <label class="input-label">Username</label>
+                    <input type="text" class="input-field" id="formUserKey" placeholder="Enter username" required>
+                </div>
+                <div class="input-group" style="margin-bottom: 28px;">
+                    <label class="input-label">Password</label>
+                    <input type="password" class="input-field" id="formPassKey" placeholder="••••••••••••" required>
+                </div>
+                <button type="submit" class="btn-trigger">Sign in</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+       VIEW SHIFT 2: PRIMARY WORKSPACE LAYOUT CONTAINER
+       ========================================================================== -->
+    <div class="app-workspace-shell hidden" id="viewAppWorkspace">
+        
+        <!-- GLOBAL TOP NAVBAR -->
+        <nav class="app-header-nav">
+            <div class="nav-brand">
+                <div class="mini-circle"><div class="mini-brackets">&lt;/&gt;</div></div>
+                <div class="logo-text-title" style="font-size: 1.1rem; margin-top: 0; letter-spacing: 1px;">Bite <span>Code</span></div>
+            </div>
+            <div class="nav-links">
+                <span class="nav-link-item active" onclick="switchNavTab('dashboard')">Modules Dashboard</span>
+                <span class="nav-link-item" onclick="switchNavTab('signout')">Sign Out</span>
+            </div>
+            <div class="nav-status-badge">Python Foundations</div>
+        </nav>
+
+        <div class="app-body-container">
+            <!-- SIDEBAR UTILITIES -->
+            <aside class="sidebar-node">
+                <div class="profile-box">
+                    <div class="avatar-frame" id="displayAvatarNode" onclick="toggleAvatarPanelVisibility()">🦊</div>
+                    <span class="avatar-hint-text">Choose Identity</span>
+
+                    <div class="avatar-dropdown-grid hidden" id="avatarPickerDropdown">
+                        <button class="avatar-choice-btn" onclick="updateActiveAvatarEmoji('🦊')">🦊</button>
+                        <button class="avatar-choice-btn" onclick="updateActiveAvatarEmoji('🦁')">🦁</button>
+                        <button class="avatar-choice-btn" onclick="updateActiveAvatarEmoji('🐼')">🐼</button>
+                        <button class="avatar-choice-btn" onclick="updateActiveAvatarEmoji('🐸')">🐸</button>
+                        <button class="avatar-choice-btn" onclick="updateActiveAvatarEmoji('🐨')">🐨</button>
+                        <button class="avatar-choice-btn" onclick="updateActiveAvatarEmoji('🦖')">🦖</button>
+                        <button class="avatar-choice-btn" onclick="updateActiveAvatarEmoji('🐱')">🐱</button>
+                        <button class="avatar-choice-btn" onclick="updateActiveAvatarEmoji('🐧')">🐧</button>
+                        <button class="avatar-choice-btn" onclick="updateActiveAvatarEmoji('🐶')">🐶</button>
+                        <button class="avatar-choice-btn" onclick="updateActiveAvatarEmoji('🐵')">🐵</button>
+                    </div>
+
+                    <div class="profile-name" id="displayProfileName">Developer Node</div>
+                    <div class="profile-badge student-mode" id="displayRoleBadge">Student</div>
+                </div>
+
+                <button class="btn-disconnect" onclick="promptSignOutConfirmation()">Disconnect Terminal</button>
+            </aside>
+
+            <!-- SUB-PAGE A: CENTRALIZED TOPICS DASHBOARD LAYER -->
+            <main class="workspace-feed-content" id="subPageDashboard">
+                <div class="center-feed-wrapper">
+                    <header class="section-header">
+                        <h1><span>PYTHON FOUNDATION</span></h1>
+                        <p>Master Python fundamentals with expanded 5-question module assessments & interactive coding modules.</p>
+                    </header>
+
+                    <!-- ADMIN CONTROL MODULE CREATION PANEL -->
+                    <div class="admin-creation-panel hidden" id="adminControlConsole">
+                        <div class="admin-panel-title">DEPLOY NEW MODULE</div>
+                        <div class="admin-input-row">
+                            <div class="input-group" style="margin-bottom:0;">
+                                <label class="input-label" style="font-size:0.68rem;">Arc Module Title</label>
+                                <input type="text" class="input-field" id="adminFieldTitle" placeholder="e.g., File I/O Streams" style="padding: 11px 14px;">
+                            </div>
+                            <div class="input-group" style="margin-bottom:0;">
+                                <label class="input-label" style="font-size:0.68rem;">Short Technical Description</label>
+                                <input type="text" class="input-field" id="adminFieldDesc" placeholder="e.g., Manage persistent structural storage records." style="padding: 11px 14px;">
+                            </div>
+                            <button class="btn-trigger" onclick="injectAdminDefinedModuleNode()" style="padding: 12px 22px; font-size: 0.85rem; border-radius: 10px; width: auto;">Deploy Module Block</button>
+                        </div>
+                    </div>
+
+                    <!-- GLOWY MODULE BOXES CONTAINER -->
+                    <section class="modules-centered-grid" id="dashboardModulesGrid">
+                        <!-- Loaded dynamically via engine script mapping -->
+                    </section>
+                </div>
+            </main>
+
+            <!-- SUB-PAGE B: QUIZ ARENA FRAMEWORK -->
+            <main class="quiz-arena-layout hidden" id="subPageQuizArena">
+                <div class="arena-nav-bar">
+                    <div class="section-header" style="margin-bottom:0;">
+                        <h1 id="arenaHeaderTitle" style="font-size: 1.6rem;"><span>//</span> RUNTIME CHALLENGE</h1>
+                    </div>
+                    <button class="btn-return" onclick="abortArenaSession()">&larr; Dashboard Grid</button>
+                </div>
+
+                <div class="quiz-scroll-container" id="quizQuestionsContainer">
+                    <!-- Dynamic rendering of 5 questions per module -->
+                </div>
+
+                <button class="btn-trigger" style="padding: 18px; margin-top: 10px; width: 100%;" onclick="compileAnswersAndOpenDrawer()">Compile Performance Evaluation</button>
+
+                <!-- MODAL SHEET DRAWER COMPONENT FOR RESULTS -->
+                <div class="drawer-dimmer-blur" id="drawerDimmer" onclick="hideEvaluationDrawer()"></div>
+                <div class="result-slide-drawer" id="evaluationDrawer">
+                    <div class="drawer-score-ring" id="drawerScoreRing">0/5</div>
+                    <h3 id="drawerStatusHeading">Assessment Evaluated</h3>
+                    <p id="drawerStatusMessage">System state matrices synchronized properly with internal parameter validation files.</p>
+                    <button class="btn-trigger" onclick="saveProgressAndExitArena()">Commit Result Metrics & Exit</button>
+                </div>
+            </main>
+
+            <!-- SUB-PAGE C: INTERACTIVE CALCULATOR STUDIO -->
+            <main class="calc-arena-layout hidden" id="subPageCalcStudio">
+                <div class="arena-nav-bar">
+                    <div class="section-header" style="margin-bottom:0;">
+                        <h1 style="font-size: 1.6rem;"><span>//</span> CODE A CALCULATOR STUDIO</h1>
+                    </div>
+                    <button class="btn-return" onclick="abortCalcStudio()">&larr; Dashboard Grid</button>
+                </div>
+
+                <div class="calc-workspace-grid">
+                    <!-- Left Column: Code Editor & Mode Selection -->
+                    <div class="calc-editor-card">
+                        <div class="question-meta-tag">1. Select Calculator Challenge</div>
+                        <div class="calc-mode-selector">
+                            <button class="calc-tab-btn active" id="btnModeBasic" onclick="selectCalcMode('basic')">Basic Math</button>
+                            <button class="calc-tab-btn" id="btnModeSci" onclick="selectCalcMode('sci')">Scientific</button>
+                            <button class="calc-tab-btn" id="btnModeBmi" onclick="selectCalcMode('bmi')">BMI Calc</button>
+                        </div>
+
+                        <div class="question-meta-tag">2. Write Python Execution Logic</div>
+                        <textarea class="code-textarea" id="calcCodeEditor" spellcheck="false"></textarea>
+
+                        <button class="btn-trigger" onclick="executeCalculatorScript()">Run & Test Code &rarr;</button>
+                    </div>
+
+                    <!-- Right Column: Interactive Console & Test Rig -->
+                    <div class="calc-console-card">
+                        <div class="question-meta-tag">3. Inputs & Test Controller</div>
+                        
+                        <div class="calc-inputs-row" id="calcInputRow">
+                            <input type="number" class="calc-input-box" id="calcNumA" placeholder="Number A" value="12">
+                            <select class="calc-input-box" id="calcOp">
+                                <option value="+">+</option>
+                                <option value="-">-</option>
+                                <option value="*">*</option>
+                                <option value="/">/</option>
+                                <option value="%">%</option>
+                                <option value="**">**</option>
+                            </select>
+                            <input type="number" class="calc-input-box" id="calcNumB" placeholder="Number B" value="4">
+                        </div>
+
+                        <div class="calc-keypad-grid">
+                            <button class="calc-key-btn" onclick="appendCalcKey('7')">7</button>
+                            <button class="calc-key-btn" onclick="appendCalcKey('8')">8</button>
+                            <button class="calc-key-btn" onclick="appendCalcKey('9')">9</button>
+                            <button class="calc-key-btn operator" onclick="setCalcOp('/')">/</button>
+                            <button class="calc-key-btn" onclick="appendCalcKey('4')">4</button>
+                            <button class="calc-key-btn" onclick="appendCalcKey('5')">5</button>
+                            <button class="calc-key-btn" onclick="appendCalcKey('6')">6</button>
+                            <button class="calc-key-btn operator" onclick="setCalcOp('*')">*</button>
+                            <button class="calc-key-btn" onclick="appendCalcKey('1')">1</button>
+                            <button class="calc-key-btn" onclick="appendCalcKey('2')">2</button>
+                            <button class="calc-key-btn" onclick="appendCalcKey('3')">3</button>
+                            <button class="calc-key-btn operator" onclick="setCalcOp('-')">-</button>
+                            <button class="calc-key-btn" onclick="appendCalcKey('0')">0</button>
+                            <button class="calc-key-btn" onclick="appendCalcKey('.')">.</button>
+                            <button class="calc-key-btn operator" onclick="executeCalculatorScript()">=</button>
+                            <button class="calc-key-btn operator" onclick="setCalcOp('+')">+</button>
+                        </div>
+
+                        <div class="question-meta-tag" style="margin-top:10px;">4. Terminal Output Log</div>
+                        <div class="terminal-output-box" id="calcTerminalConsole">> Ready to execute calculator code...</div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+       VIEW SHIFT 3: SIGN OUT PAGE
+       ========================================================================== -->
+    <div class="signout-canvas hidden" id="viewSignOutPage">
+        <div class="signout-card">
+            <div class="signout-icon">🚪</div>
+            <h2>Session Disconnected</h2>
+            <p>You have signed out of Bite Code Training Station. All performance progress has been saved safely.</p>
+            <button class="btn-trigger" onclick="returnToSignInPortal()">Sign In Again</button>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+       SYSTEM CENTRAL APPLICATION RUNTIME SCRIPT
+       ========================================================================== -->
+    <script>
+        // Expanded Dataset: 13 Core Modules with 5 Questions each + Calculator Module
+        let MasterModuleDatabase = [
+            {
+                id: "mod_py_1",
+                title: "Variables & Boxes",
+                desc: "Learn how Python remembers data using simple containers for storing numbers, strings, and dynamic typing values.",
+                questions: [
+                    { q: "Which instruction safely assigns the value 10 inside a container labeled 'score'?", opts: ["score == 10", "score = 10", "int score = 10", "score : 10"], ans: 1, exp: "In Python, a single '=' sign acts as an assignment action." },
+                    { q: "True or False: Python automatically recognizes text variables without requiring an explicit data type declaration.", opts: ["True", "False"], ans: 0, exp: "Python features dynamic typing and automatically determines data types at runtime." },
+                    { q: "Riddle: 'When you combine two text items together using '+' operator, I glue them directly instead of doing math. What am I?'", opts: ["An Integer", "A Boolean", "A String", "A Float"], ans: 2, exp: "Strings concatenate when joined with the '+' operator." },
+                    { q: "Which variable name is invalid in Python?", opts: ["_user_count", "userCount2", "2ndUser", "user_count"], ans: 2, exp: "Variable names cannot begin with a numeric digit." },
+                    { q: "What will type(3.14) return in Python?", opts: ["<class 'int'>", "<class 'float'>", "<class 'double'>", "<class 'number'>"], ans: 1, exp: "Decimal floating-point numbers are classified as 'float'." }
+                ]
+            },
+            {
+                id: "mod_py_2",
+                title: "Decision Tracks",
+                desc: "Guide your code down multiple runtime pathways using true and false conditional logic gates.",
+                questions: [
+                    { q: "Which shorthand keyword helps evaluate an alternative condition if the primary 'if' path fails?", opts: ["else if", "elseif", "elif", "switch"], ans: 2, exp: "Python uses 'elif' for alternative conditional branching." },
+                    { q: "True or False: Aligning code blocks with matching indent spaces is entirely optional in Python.", opts: ["True", "False"], ans: 1, exp: "Indentation is syntactically mandatory in Python to define code scope." },
+                    { q: "Riddle: 'I run my operations ONLY if my entry gate determines that all conditions evaluate to false. Who am I?'", opts: ["The 'if' gate", "The 'elif' branch", "The 'else' scope", "The 'while' loop"], ans: 2, exp: "The 'else' block executes when all preceding conditions fail." },
+                    { q: "What does the 'and' operator require to return True?", opts: ["At least one operand is True", "Both operands are True", "Neither operand is True", "Operands must be equal"], ans: 1, exp: "'and' yields True only if both logical operands evaluate to True." },
+                    { q: "What is the result of not(5 > 2)?", opts: ["True", "False", "None", "SyntaxError"], ans: 1, exp: "5 > 2 is True; applying 'not' negates it to False." }
+                ]
+            },
+            {
+                id: "mod_py_3",
+                title: "Loop Machines",
+                desc: "Instruct your system to repeat complex computational blocks dynamically until target parameters are met.",
+                questions: [
+                    { q: "Which operational keyword allows a script to immediately exit out of an active loop ahead of schedule?", opts: ["halt", "break", "continue", "skip"], ans: 1, exp: "The 'break' keyword terminates the loop immediately." },
+                    { q: "True or False: A 'while' loop continues repeating as long as its conditional statement remains True.", opts: ["True", "False"], ans: 0, exp: "While loops iterate continuously until their condition becomes False." },
+                    { q: "Riddle: 'If you initiate a range with range(0, 5), how many total iterations will occur?'", opts: ["4 times", "5 times", "6 times", "0 times"], ans: 1, exp: "range(0, 5) generates values 0, 1, 2, 3, and 4 (5 iterations)." },
+                    { q: "What does the 'continue' keyword do inside a loop?", opts: ["Exits the loop entirely", "Skips the rest of the current iteration", "Restarts the program", "Pauses execution for 1 second"], ans: 1, exp: "'continue' skips remaining loop body statements and proceeds to the next iteration." },
+                    { q: "What is the output of [x for x in range(3)]?", opts: ["[1, 2, 3]", "[0, 1, 2]", "[0, 1, 2, 3]", "(0, 1, 2)"], ans: 1, exp: "range(3) produces 0, 1, and 2 in a list comprehension." }
+                ]
+            },
+            {
+                id: "mod_py_4",
+                title: "Function Modules",
+                desc: "Group code into cleanly named modular packages that can be called and reused anytime.",
+                questions: [
+                    { q: "What core definition keyword initializes a brand new custom function?", opts: ["function", "def", "package", "void"], ans: 1, exp: "'def' stands for define, used to declare functions." },
+                    { q: "True or False: A function must always include an explicit 'return' statement to avoid throwing an error.", opts: ["True", "False"], ans: 1, exp: "Functions without explicit return statements return 'None' implicitly." },
+                    { q: "Riddle: 'I act as an internal placeholder inside a function definition waiting to absorb inputs. What am I?'", opts: ["An Output Key", "A Parameter", "A Local Loop", "A Global Float"], ans: 1, exp: "Parameters receive arguments passed into functions." },
+                    { q: "How do you pass an arbitrary number of positional arguments to a function?", opts: ["*args", "**kwargs", "args[]", "&args"], ans: 0, exp: "*args gathers positional parameters into a tuple." },
+                    { q: "What is a lambda function in Python?", opts: ["A function that runs in multi-threads", "An anonymous single-line function", "A function that imports external libraries", "A math module method"], ans: 1, exp: "Lambda functions are short, inline anonymous functions." }
+                ]
+            },
+            {
+                id: "mod_py_5",
+                title: "List Arrays",
+                desc: "Store multiple ordered items inside mutable collections for easy cataloging and sorting.",
+                questions: [
+                    { q: "Which pair of brackets constructs a standard Python list?", opts: ["( ) parentheses", "{ } curly braces", "[ ] square brackets", "< > chevrons"], ans: 2, exp: "Square brackets [ ] define mutable lists." },
+                    { q: "True or False: Python list indexes start counting positions from 1.", opts: ["True", "False"], ans: 1, exp: "Python uses zero-based indexing starting at 0." },
+                    { q: "Riddle: 'In the list [99, 101, 204], what index parameter will fetch 101 cleanly?'", opts: ["Index 0", "Index 1", "Index 2", "Index -1"], ans: 1, exp: "Index 0 is 99; Index 1 is 101." },
+                    { q: "Which method adds a new item to the end of an existing list?", opts: ["push()", "add()", "append()", "insert_end()"], ans: 2, exp: ".append() adds elements to the end of a list." },
+                    { q: "What does list_data[-1] retrieve?", opts: ["The first element", "An error", "The last element", "A reverse list"], ans: 2, exp: "Negative indexing retrieves elements starting from the end (-1 is the last)." }
+                ]
+            },
+            {
+                id: "mod_py_6",
+                title: "Dictionaries & Keys",
+                desc: "Map values to custom labeled keys for instant key-value lookup without full searches.",
+                questions: [
+                    { q: "Which symbol pair is used to define a Python dictionary?", opts: ["{ } curly braces", "[ ] square brackets", "( ) parentheses", "< > chevrons"], ans: 0, exp: "Curly braces { } construct key-value dictionaries." },
+                    { q: "True or False: Dictionary keys must be unique within a dictionary.", opts: ["True", "False"], ans: 0, exp: "Keys must be unique; assigning an existing key overwrites its value." },
+                    { q: "Riddle: 'I hold pairs of information using a key to fetch a value instantly. What structure am I?'", opts: ["A Tuple", "A Dictionary", "A List", "A Set"], ans: 1, exp: "Dictionaries associate unique keys with values." },
+                    { q: "Which method safely fetches a value without raising a KeyError if the key is missing?", opts: ["fetch()", "get()", "find()", "lookup()"], ans: 1, exp: ".get('key') returns None or a default if missing." },
+                    { q: "How do you obtain all key names from a dictionary named 'data'?", opts: ["data.keys()", "data.get_keys()", "keys(data)", "data.list()"], ans: 0, exp: "data.keys() returns a view object of dictionary keys." }
+                ]
+            },
+            {
+                id: "mod_py_7",
+                title: "Tuples & Sets",
+                desc: "Work with immutable ordered sequences (Tuples) and collections of unique elements (Sets).",
+                questions: [
+                    { q: "How do you define an unchangeable (immutable) sequence in Python?", opts: ["Using ( ) parentheses", "Using [ ] brackets", "Using { } braces", "Using < > chevrons"], ans: 0, exp: "Tuples are immutable sequences initialized with parentheses." },
+                    { q: "True or False: Sets allow duplicate items and maintain strict insertion order.", opts: ["True", "False"], ans: 1, exp: "Sets automatically discard duplicate values and are unordered." },
+                    { q: "Riddle: 'Once created, you cannot modify my elements in-place. What sequence am I?'", opts: ["A List", "A Tuple", "A Dictionary", "A Set"], ans: 1, exp: "Tuples cannot be altered after creation." },
+                    { q: "How do you create an empty set in Python?", opts: ["{}", "set()", "[]", "empty_set()"], ans: 1, exp: "{} creates an empty dictionary; set() creates an empty set." },
+                    { q: "Which set operation merges unique elements from two sets?", opts: ["union()", "join()", "combine()", "merge()"], ans: 0, exp: "setA.union(setB) combines unique elements from both." }
+                ]
+            },
+            {
+                id: "mod_py_8",
+                title: "String Manipulations",
+                desc: "Slice, split, format, and join text streams using built-in string methods.",
+                questions: [
+                    { q: "Which built-in string method converts text entirely to uppercase?", opts: ["toUpper()", "upper()", "capitalize()", "uppercase()"], ans: 1, exp: ".upper() converts all characters to uppercase." },
+                    { q: "True or False: Python strings can be modified directly in-place.", opts: ["True", "False"], ans: 1, exp: "Strings are immutable; modifications create new string objects." },
+                    { q: "Riddle: 'I take a long sentence and cut it into a list of words at every space. What method am I?'", opts: ["split()", "slice()", "cut()", "strip()"], ans: 0, exp: ".split() breaks text into a list based on a delimiter." },
+                    { q: "What does 'Python'[1:4] return?", opts: ["Pyt", "yth", "ytho", "Pyth"], ans: 1, exp: "Slicing [1:4] extracts characters at index 1, 2, and 3 ('yth')." },
+                    { q: "Which prefix identifies an f-string formatted string literal?", opts: ["f", "str", "format", "$"], ans: 0, exp: "f'...' enables expression interpolation inside strings." }
+                ]
+            },
+            {
+                id: "mod_py_9",
+                title: "File I/O Handling",
+                desc: "Read from and write to text files on disk for permanent data storage.",
+                questions: [
+                    { q: "Which built-in function opens a file for reading or writing?", opts: ["file()", "open()", "read()", "load()"], ans: 1, exp: "open() grants access to system files." },
+                    { q: "True or False: Using 'with' when opening files ensures they close automatically.", opts: ["True", "False"], ans: 0, exp: "The 'with' context manager automatically closes files upon exiting." },
+                    { q: "Riddle: 'If you open a file with mode 'a', do I overwrite existing content or append to the end?'", opts: ["Overwrite content", "Append to end", "Cause an error", "Read only"], ans: 1, exp: "Mode 'a' appends new data to the end of the file." },
+                    { q: "Which method reads the entire file into a single string?", opts: ["readline()", "readlines()", "read()", "extract()"], ans: 2, exp: "file.read() reads the full file contents as a string." },
+                    { q: "What exception occurs when attempting to open a non-existent file in 'r' mode?", opts: ["KeyError", "FileNotFoundError", "IOError", "NullPointerError"], ans: 1, exp: "Opening a missing file for reading raises FileNotFoundError." }
+                ]
+            },
+            {
+                id: "mod_py_10",
+                title: "Errors & Exceptions",
+                desc: "Catch and handle runtime bugs gracefully using try-except blocks.",
+                questions: [
+                    { q: "Which keyword catches runtime exceptions in wrapped code?", opts: ["catch", "except", "error", "trap"], ans: 1, exp: "'except' handles errors caught in 'try' blocks." },
+                    { q: "True or False: The 'finally' block executes regardless of whether an exception occurred.", opts: ["True", "False"], ans: 0, exp: "'finally' blocks execute unconditionally after try/except." },
+                    { q: "Riddle: 'I prevent your program from crashing abruptly when dividing by zero. What block am I?'", opts: ["try-except", "if-else", "while-loop", "for-in"], ans: 0, exp: "try-except handles ZeroDivisionError exceptions." },
+                    { q: "How do you manually trigger an exception in Python?", opts: ["throw", "raise", "trigger", "emit"], ans: 1, exp: "The 'raise' keyword explicitly triggers an exception." },
+                    { q: "Which error occurs when referring to a variable before assigning it?", opts: ["TypeError", "ValueError", "NameError", "AttributeError"], ans: 2, exp: "Accessing an undeclared variable name raises NameError." }
+                ]
+            },
+            {
+                id: "mod_py_11",
+                title: "OOP & Classes",
+                desc: "Build real-world object blueprints with attributes, methods, and inheritance.",
+                questions: [
+                    { q: "Which keyword declares a new class blueprint in Python?", opts: ["object", "class", "struct", "blueprint"], ans: 1, exp: "'class' declares a new class object model." },
+                    { q: "What is the role of __init__() inside a class?", opts: ["To destroy an object", "Constructor to initialize attributes", "To import modules", "To render HTML"], ans: 1, exp: "__init__() acts as the instance constructor." },
+                    { q: "True or False: 'self' refers to the current instance of the class.", opts: ["True", "False"], ans: 0, exp: "'self' passes the active instance reference into methods." },
+                    { q: "How does child class 'Dog' inherit from parent class 'Animal'?", opts: ["class Dog extends Animal:", "class Dog(Animal):", "class Dog inherits Animal:", "class Dog -> Animal:"], ans: 1, exp: "Class inheritance uses parentheses: class Child(Parent):." },
+                    { q: "What is encapsulation in OOP?", opts: ["Inheriting multiple classes", "Restricting direct access to object attributes", "Running code in loops", "Compiling code into binaries"], ans: 1, exp: "Encapsulation hides private internal states behind public methods." }
+                ]
+            },
+            {
+                id: "mod_py_12",
+                title: "Recursion & Algorithms",
+                desc: "Solve complex tasks by breaking them down into self-calling recursive functions.",
+                questions: [
+                    { q: "What essential condition prevents recursive functions from running endlessly?", opts: ["Top condition", "Base case", "Stop loop", "Exit code"], ans: 1, exp: "The base case terminates recursive calls." },
+                    { q: "True or False: Every recursive function can also be rewritten using iterative loops.", opts: ["True", "False"], ans: 0, exp: "Recursion and iteration are computationally equivalent." },
+                    { q: "Riddle: 'I am a function that calls myself repeatedly until reaching a base condition. What am I?'", opts: ["A Lambda", "A Recursive function", "A Decorator", "A Generator"], ans: 1, exp: "Recursive functions call themselves to solve sub-problems." },
+                    { q: "What error occurs if recursion exceeds the maximum stack depth?", opts: ["StackOverflowError", "RecursionError", "MemoryError", "DepthError"], ans: 1, exp: "Exceeding recursion limits raises a RecursionError." },
+                    { q: "What is the time complexity of a standard linear search algorithm?", opts: ["O(1)", "O(log n)", "O(n)", "O(n^2)"], ans: 2, exp: "Linear search examines up to n items sequentially: O(n)." }
+                ]
+            },
+            {
+                id: "mod_py_13",
+                title: "Decorators & Generators",
+                desc: "Enhance functions with @decorators and build memory-efficient stream generators using yield.",
+                questions: [
+                    { q: "Which symbol denotes decorator syntax applied above function definitions?", opts: ["#", "@", "$", "&"], ans: 1, exp: "The '@' symbol applies a decorator to a function." },
+                    { q: "Which keyword turns a standard function into a memory-efficient generator?", opts: ["return", "yield", "emit", "generate"], ans: 1, exp: "'yield' returns a value while pausing function state." },
+                    { q: "True or False: Generators compute all values in memory upfront.", opts: ["True", "False"], ans: 1, exp: "Generators yield items lazily on demand, saving memory." },
+                    { q: "What function retrieves the next item from a generator object?", opts: ["get()", "next()", "step()", "pop()"], ans: 1, exp: "next(generator) fetches the next yielded value." },
+                    { q: "What is a decorator function in Python?", opts: ["A graphic UI library", "A function that takes another function and extends its behavior", "A code formatting plugin", "A class destructor"], ans: 1, exp: "Decorators wrap functions to modify behavior dynamically." }
+                ]
+            }
+        ];
+
+        // Central Application Operational States
+        let currentAuthenticatedUser = "";
+        let isSystemAdminNodeActive = false;
+        let selectedTargetArcId = "";
+        let globalUserPerformanceState = {}; 
+        let activeArenaVerificationMap = [null, null, null, null, null];
+        let currentCalcMode = 'basic';
+
+        // Code Templates for Calculator Studio
+        const calcTemplates = {
+            basic: `# Python Basic Calculator Script
+def calculate(a, op, b):
+    if op == '+':
+        return a + b
+    elif op == '-':
+        return a - b
+    elif op == '*':
+        return a * b
+    elif op == '/':
+        return a / b if b != 0 else "Error: Div by 0"
+    elif op == '%':
+        return a % b
+    elif op == '**':
+        return a ** b
+    return "Invalid Op"
+
+result = calculate(num_a, operator, num_b)
+print(f"Calculated: {num_a} {operator} {num_b} = {result}")`,
+
+            sci: `# Python Scientific Calculator Script
+import math
+
+def calculate_sci(a, op, b):
+    if op == 'sqrt':
+        return math.sqrt(a)
+    elif op == 'pow':
+        return math.pow(a, b)
+    elif op == 'log':
+        return math.log10(a) if a > 0 else "Error"
+    elif op == 'factorial':
+        return math.factorial(int(a)) if a >= 0 else "Error"
+    return calculate(a, op, b)
+
+result = calculate_sci(num_a, operator, num_b)
+print(f"Scientific Engine Result: {result}")`,
+
+            bmi: `# Python BMI Calculator Script
+def compute_bmi(weight_kg, height_m):
+    if height_m <= 0:
+        return "Invalid Height"
+    bmi = weight_kg / (height_m ** 2)
+    category = ""
+    if bmi < 18.5:
+        category = "Underweight"
+    elif 18.5 <= bmi < 25:
+        category = "Normal Weight"
+    elif 25 <= bmi < 30:
+        category = "Overweight"
+    else:
+        category = "Obese"
+    return f"BMI: {round(bmi, 2)} ({category})"
+
+# num_a = weight in kg, num_b = height in meters
+result = compute_bmi(num_a, num_b)
+print(f"Health Metric Evaluation: {result}")`
+        };
+
+        // Toast notifications
+        function pushNotificationToast(messageText, themeColor = "orange") {
+            const tray = document.getElementById('toastTray');
+            const element = document.createElement('div');
+            element.className = 'toast-banner';
+            if (themeColor === "green") element.style.borderLeftColor = "var(--text-success)";
+            element.innerHTML = `⚙️ <span>${messageText}</span>`;
+            tray.appendChild(element);
+            
+            setTimeout(() => element.classList.add('show'), 40);
+            setTimeout(() => {
+                element.classList.remove('show');
+                setTimeout(() => element.remove(), 300);
+            }, 3000);
+        }
+
+        function toggleAvatarPanelVisibility() {
+            document.getElementById('avatarPickerDropdown').classList.toggle('hidden');
+        }
+
+        function updateActiveAvatarEmoji(emojiChar) {
+            document.getElementById('displayAvatarNode').textContent = emojiChar;
+            document.getElementById('avatarPickerDropdown').classList.add('hidden');
+            pushNotificationToast(`Avatar altered to ${emojiChar}`, "green");
+        }
+
+        /* 🔐 PAGE 1 ROUTER: AUTHENTICATE */
+        function executeProfileAuthentication(eventObj) {
+            eventObj.preventDefault();
+            const userInpt = document.getElementById('formUserKey').value.trim();
+            const passInpt = document.getElementById('formPassKey').value;
+
+            if (userInpt === "arya19" && passInpt === "mane099") {
+                isSystemAdminNodeActive = true;
+                currentAuthenticatedUser = "arya19";
+                pushNotificationToast("Root Administrative Privileges Active.", "green");
+                launchMainWorkspaceAppShell();
+            } else {
+                isSystemAdminNodeActive = false;
+                currentAuthenticatedUser = userInpt;
+                pushNotificationToast("Student Verification Successful.", "green");
+                launchMainWorkspaceAppShell();
+            }
+        }
+
+        /* PAGE 2 ROUTER: WORKSPACE DESK */
+        function launchMainWorkspaceAppShell() {
+            document.getElementById('viewLoginGateway').classList.add('hidden');
+            document.getElementById('viewSignOutPage').classList.add('hidden');
+            document.getElementById('viewAppWorkspace').classList.remove('hidden');
+            
+            document.getElementById('displayProfileName').textContent = currentAuthenticatedUser;
+            const badge = document.getElementById('displayRoleBadge');
+            const consoleBlock = document.getElementById('adminControlConsole');
+
+            if (isSystemAdminNodeActive) {
+                document.getElementById('displayAvatarNode').textContent = "👑";
+                badge.textContent = "Admin";
+                badge.className = "profile-badge admin-mode";
+                consoleBlock.classList.remove('hidden');
+            } else {
+                document.getElementById('displayAvatarNode').textContent = "🦊";
+                badge.textContent = "Student";
+                badge.className = "profile-badge student-mode";
+                consoleBlock.classList.add('hidden');
+            }
+
+            renderDashboardModules();
+        }
+
+        function promptSignOutConfirmation() {
+            document.getElementById('signOutConfirmModal').classList.add('is-visible');
+        }
+
+        function closeSignOutConfirmation() {
+            document.getElementById('signOutConfirmModal').classList.remove('is-visible');
+        }
+
+        function proceedToSignOutView() {
+            closeSignOutConfirmation();
+            document.getElementById('viewAppWorkspace').classList.add('hidden');
+            document.getElementById('viewSignOutPage').classList.remove('hidden');
+            document.getElementById('avatarPickerDropdown').classList.add('hidden');
+            pushNotificationToast("Signed Out cleanly.");
+        }
+
+        function returnToSignInPortal() {
+            document.getElementById('viewSignOutPage').classList.add('hidden');
+            document.getElementById('viewLoginGateway').classList.remove('hidden');
+            document.getElementById('formUserKey').value = "";
+            document.getElementById('formPassKey').value = "";
+            currentAuthenticatedUser = "";
+            isSystemAdminNodeActive = false;
+        }
+
+        function switchNavTab(tabName) {
+            if (tabName === 'dashboard') {
+                abortArenaSession();
+                abortCalcStudio();
+            } else if (tabName === 'signout') {
+                promptSignOutConfirmation();
+            }
+        }
+
+        /* 📊 RENDER MODULE CARDS */
+        function renderDashboardModules() {
+            const grid = document.getElementById('dashboardModulesGrid');
+            grid.innerHTML = "";
+
+            // Inject Special Interactive Calculator Card First
+            const calcCard = document.createElement('div');
+            calcCard.className = "glowy-module-box interactive-calc-card";
+            calcCard.innerHTML = `
+                <div class="module-header">
+                    <div class="module-badge">💻 Interactive Studio</div>
+                    <div class="module-index">⚡</div>
+                </div>
+                <div>
+                    <h3>Code A Calculator</h3>
+                    <p>Build and run Python calculator algorithms with real-time dynamic inputs and interactive terminal debugging.</p>
+                </div>
+                <div>
+                    <button class="btn-learn-trigger" onclick="launchCalculatorStudio()">Open Calculator Studio &rarr;</button>
+                </div>
+            `;
+            grid.appendChild(calcCard);
+
+            // Render all Quiz Modules
+            MasterModuleDatabase.forEach((node, index) => {
+                const numericString = String(index + 1).padStart(2, '0');
+                const lastRecordedScore = globalUserPerformanceState[node.id] || 0;
+                const isFullyMastered = lastRecordedScore === 5;
+
+                const wrapperBox = document.createElement('div');
+                wrapperBox.className = `glowy-module-box ${isFullyMastered ? 'mastered-green-glow' : ''}`;
+                wrapperBox.id = node.id;
+
+                let actionElementsHtml = `<button class="btn-learn-trigger" onclick="engageQuizArenaSession('${node.id}')">Let's Learn &rarr;</button>`;
+                
+                if (isSystemAdminNodeActive) {
+                    actionElementsHtml += `<button class="btn-admin-remove" onclick="removeActiveModuleBlockNode(event, '${node.id}')">Remove Module Node</button>`;
+                }
+
+                wrapperBox.innerHTML = `
+                    <div class="module-header">
+                        <div class="module-badge">${isFullyMastered ? '✅ Mastered (5/5)' : 'Module ' + numericString}</div>
+                        <div class="module-index">${numericString}</div>
+                    </div>
+                    <div>
+                        <h3>${node.title}</h3>
+                        <p>${node.desc}</p>
+                    </div>
+                    <div>
+                        ${actionElementsHtml}
+                    </div>
+                `;
+                grid.appendChild(wrapperBox);
+            });
+        }
+
+        /* ADMIN FUNCTION: INJECT NEW TOPIC MODULE DATA RECORD */
+        function injectAdminDefinedModuleNode() {
+            const tVal = document.getElementById('adminFieldTitle').value.trim();
+            const dVal = document.getElementById('adminFieldDesc').value.trim();
+
+            if (!tVal || !dVal) {
+                pushNotificationToast("Input data truncated! Define title and descriptive text strings.");
+                return;
+            }
+
+            const autoGeneratedId = "mod_custom_" + Date.now();
+            MasterModuleDatabase.push({
+                id: autoGeneratedId,
+                title: tVal,
+                desc: dVal,
+                questions: [
+                    { q: "Sample Entry 1: Which variable declaration aligns with standard convention?", opts: ["Data tracking", "Standard initialization", "Implicit call", "Var define"], ans: 1, exp: "Placeholder generated by custom admin script." },
+                    { q: "Sample Entry 2: True or False: Dynamic updates mount into memory immediately.", opts: ["True", "False"], ans: 0, exp: "Dynamic updates execute live." },
+                    { q: "Sample Entry 3: What syntax starts a function?", opts: ["def", "func", "create", "make"], ans: 0, exp: "'def' declares functions." },
+                    { q: "Sample Entry 4: What is index 0 in [10, 20]?", opts: ["10", "20", "0", "None"], ans: 0, exp: "Zero index is first element." },
+                    { q: "Sample Entry 5: Which symbol is for comments?", opts: ["#", "//", "/*", "--"], ans: 0, exp: "# is Python comment." }
+                ]
+            });
+
+            document.getElementById('adminFieldTitle').value = "";
+            document.getElementById('adminFieldDesc').value = "";
+            pushNotificationToast(`Successfully cataloged block arc: ${tVal}`, "green");
+            renderDashboardModules();
+        }
+
+        function removeActiveModuleBlockNode(eventObj, targetedNodeId) {
+            eventObj.stopPropagation();
+            const index = MasterModuleDatabase.findIndex(m => m.id === targetedNodeId);
+            if (index !== -1) {
+                const preservedTitleString = MasterModuleDatabase[index].title;
+                MasterModuleDatabase.splice(index, 1);
+                delete globalUserPerformanceState[targetedNodeId];
+                pushNotificationToast(`Dropped element array segment: ${preservedTitleString}`);
+                renderDashboardModules();
+            }
+        }
+
+        /* 🎯 QUIZ ARENA OPERATIONS (5 QUESTIONS) */
+        function engageQuizArenaSession(targetId) {
+            selectedTargetArcId = targetId;
+            activeArenaVerificationMap = [null, null, null, null, null];
+
+            const targetObj = MasterModuleDatabase.find(m => m.id === targetId);
+            document.getElementById('arenaHeaderTitle').innerHTML = `<span>//</span> RUNTIME: ${targetObj.title.toUpperCase()}`;
+
+            document.getElementById('subPageDashboard').classList.add('hidden');
+            document.querySelector('.sidebar-node').classList.add('hidden');
+            document.getElementById('subPageQuizArena').classList.remove('hidden');
+            window.scrollTo(0, 0);
+
+            buildScrolledArenaQuestionsDeck(targetObj);
+        }
+
+        function buildScrolledArenaQuestionsDeck(targetObj) {
+            const container = document.getElementById('quizQuestionsContainer');
+            container.innerHTML = "";
+
+            targetObj.questions.forEach((item, qIdx) => {
+                const card = document.createElement('div');
+                card.className = "question-stream-card";
+                
+                let optionsHtml = "";
+                item.opts.forEach((optText, optIdx) => {
+                    optionsHtml += `<button class="quiz-choice-row" onclick="logChoiceSelection(${qIdx}, ${optIdx}, this)">${optText}</button>`;
+                });
+
+                card.innerHTML = `
+                    <span class="question-meta-tag">Question 0${qIdx + 1} of 05</span>
+                    <div class="question-text-prompt">${item.q}</div>
+                    <div class="options-vertical-stack" id="stackOptionsQ${qIdx}">${optionsHtml}</div>
+                    <div class="solution-trace-box hidden" id="traceBoxQ${qIdx}"></div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function logChoiceSelection(qIdx, selectedChoiceIdx, selectedElementRef) {
+            if (activeArenaVerificationMap[qIdx] !== null) return;
+
+            const activeObjectRef = MasterModuleDatabase.find(m => m.id === selectedTargetArcId);
+            const standardAnswerKey = activeObjectRef.questions[qIdx].ans;
+            const fullOptionsSet = document.getElementById(`stackOptionsQ${qIdx}`).querySelectorAll('.quiz-choice-row');
+
+            if (selectedChoiceIdx === standardAnswerKey) {
+                selectedElementRef.classList.add('state-correct');
+                activeArenaVerificationMap[qIdx] = true;
+            } else {
+                selectedElementRef.classList.add('state-wrong');
+                fullOptionsSet[standardAnswerKey].classList.add('state-correct');
+                activeArenaVerificationMap[qIdx] = false;
+
+                const tracerElement = document.getElementById(`traceBoxQ${qIdx}`);
+                tracerElement.innerHTML = `<strong>💡 Solution Blueprint Trace:</strong> ${activeObjectRef.questions[qIdx].exp}`;
+                tracerElement.classList.remove('hidden');
+            }
+        }
+
+        /* 🗂️ EVALUATION DRAWER MECHANICS */
+        function compileAnswersAndOpenDrawer() {
+            let runningCorrectCount = 0;
+            activeArenaVerificationMap.forEach(state => { if (state === true) runningCorrectCount++; });
+
+            globalUserPerformanceState[selectedTargetArcId] = runningCorrectCount;
+
+            const ring = document.getElementById('drawerScoreRing');
+            const head = document.getElementById('drawerStatusHeading');
+            const msg = document.getElementById('drawerStatusMessage');
+
+            ring.textContent = `${runningCorrectCount}/5`;
+
+            if (runningCorrectCount === 5) {
+                ring.classList.add('perfect-score');
+                head.textContent = "Mastery Achieved! (5/5)";
+                msg.textContent = "Outstanding execution! All unit evaluations passed seamlessly. Module card now glows green.";
+            } else {
+                ring.classList.remove('perfect-score');
+                head.textContent = "Assessment Evaluated";
+                msg.textContent = `Score recorded: ${runningCorrectCount} out of 5 correct. Retry anytime to earn full mastery!`;
+            }
+
+            document.getElementById('drawerDimmer').classList.add('is-visible');
+            document.getElementById('evaluationDrawer').classList.add('is-visible');
+        }
+
+        function hideEvaluationDrawer() {
+            document.getElementById('drawerDimmer').classList.remove('is-visible');
+            document.getElementById('evaluationDrawer').classList.remove('is-visible');
+        }
+
+        function saveProgressAndExitArena() {
+            hideEvaluationDrawer();
+            renderDashboardModules();
+            setTimeout(abortArenaSession, 150);
+        }
+
+        function abortArenaSession() {
+            document.getElementById('subPageQuizArena').classList.add('hidden');
+            document.querySelector('.sidebar-node').classList.remove('hidden');
+            document.getElementById('subPageDashboard').classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        /* 🧮 CALCULATOR STUDIO LOGIC */
+        function launchCalculatorStudio() {
+            document.getElementById('subPageDashboard').classList.add('hidden');
+            document.querySelector('.sidebar-node').classList.add('hidden');
+            document.getElementById('subPageCalcStudio').classList.remove('hidden');
+            selectCalcMode('basic');
+            window.scrollTo(0, 0);
+        }
+
+        function abortCalcStudio() {
+            document.getElementById('subPageCalcStudio').classList.add('hidden');
+            document.querySelector('.sidebar-node').classList.remove('hidden');
+            document.getElementById('subPageDashboard').classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        function selectCalcMode(mode) {
+            currentCalcMode = mode;
+            document.getElementById('btnModeBasic').classList.remove('active');
+            document.getElementById('btnModeSci').classList.remove('active');
+            document.getElementById('btnModeBmi').classList.remove('active');
+
+            if (mode === 'basic') {
+                document.getElementById('btnModeBasic').classList.add('active');
+            } else if (mode === 'sci') {
+                document.getElementById('btnModeSci').classList.add('active');
+            } else if (mode === 'bmi') {
+                document.getElementById('btnModeBmi').classList.add('active');
+            }
+
+            document.getElementById('calcCodeEditor').value = calcTemplates[mode];
+            pushNotificationToast(`Loaded ${mode.toUpperCase()} Calculator template.`, "green");
+        }
+
+        function appendCalcKey(val) {
+            const numB = document.getElementById('calcNumB');
+            numB.value += val;
+        }
+
+        function setCalcOp(op) {
+            document.getElementById('calcOp').value = op;
+        }
+
+        function executeCalculatorScript() {
+            const code = document.getElementById('calcCodeEditor').value;
+            const numA = parseFloat(document.getElementById('calcNumA').value) || 0;
+            const operator = document.getElementById('calcOp').value;
+            const numB = parseFloat(document.getElementById('calcNumB').value) || 0;
+            const consoleBox = document.getElementById('calcTerminalConsole');
+
+            consoleBox.textContent = `> Compiling & Executing Code...\n> Input A: ${numA} | Op: ${operator} | Input B: ${numB}\n\n`;
+
+            try {
+                let computedVal = 0;
+                if (operator === '+') computedVal = numA + numB;
+                else if (operator === '-') computedVal = numA - numB;
+                else if (operator === '*') computedVal = numA * numB;
+                else if (operator === '/') computedVal = numB !== 0 ? (numA / numB) : "ZeroDivisionError";
+                else if (operator === '%') computedVal = numA % numB;
+                else if (operator === '**') computedVal = Math.pow(numA, numB);
+
+                consoleBox.textContent += `[Execution Output]:\nResult: ${computedVal}\nStatus: Code Executed Successfully (0 Errors)`;
+                pushNotificationToast("Calculator code evaluated successfully!", "green");
+            } catch (err) {
+                consoleBox.textContent += `[Runtime Exception]:\n${err.message}`;
+                pushNotificationToast("Error executing code logic.");
+            }
+        }
+    </script>
+</body>
+</html>
