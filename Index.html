@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevAcademy | Learning Portal & Coding Playground</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap');
+    
+    body { 
+      font-family: 'Inter', sans-serif; 
+    }
+    
+    code, textarea, #terminal-output {
+      font-family: 'Fira Code', monospace;
+    }
+
+    .glass-nav {
+      background: rgba(15, 23, 42, 0.90);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #020617;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #334155;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- TOP NAVBAR -->
+  <header class="sticky top-0 z-50 glass-nav px-6 py-3.5 flex items-center justify-between shadow-2xl">
+    <div class="flex items-center space-x-3">
+      <div class="bg-gradient-to-tr from-indigo-600 to-violet-500 p-2 rounded-xl text-white font-bold text-lg shadow-lg shadow-indigo-500/30 flex items-center justify-center w-10 h-10">
+        &#10095;&#10094;
+      </div>
+      <div>
+        <span class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-indigo-400 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+          DevAcademy
+        </span>
+        <span class="hidden sm:inline-block text-[10px] font-semibold text-slate-400 uppercase tracking-widest ml-2 px-2 py-0.5 bg-slate-800/80 rounded-full border border-slate-700">
+          Pro
+        </span>
+      </div>
+    </div>
+
+    <!-- Navigation Links -->
+    <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-300">
+      <a href="#modules" class="hover:text-indigo-400 transition-colors py-1">Modules & Topics</a>
+      <a href="#practice" class="hover:text-indigo-400 transition-colors py-1">Practice Quiz</a>
+      <a href="#project" class="hover:text-indigo-400 transition-colors py-1">Capstone Project</a>
+    </nav>
+
+    <!-- Admin Status / Controls -->
+    <div class="flex items-center space-x-3">
+      <div id="admin-badge" class="hidden items-center space-x-2 bg-emerald-500/10 text-emerald-400 text-xs px-3 py-1.5 rounded-full border border-emerald-500/20 font-semibold shadow-inner">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>Admin Mode</span>
+      </div>
+      <button id="auth-btn" onclick="toggleAuthModal()" class="bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-xl shadow-lg shadow-indigo-600/30 border border-indigo-400/30 transition-all">
+        Admin Login
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN WRAPPER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-12">
+
+    <!-- HERO SECTION -->
+    <section class="text-center py-6 sm:py-10 space-y-4">
+      <div class="inline-flex items-center space-x-2 bg-slate-900 border border-slate-800 px-3 py-1 rounded-full text-xs text-slate-400 mb-2">
+        <span class="bg-indigo-500 w-2 h-2 rounded-full"></span>
+        <span>Interactive Developer Workspace</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white max-w-3xl mx-auto leading-tight">
+        Master Full-Stack Concepts & Practice Coding
+      </h1>
+      <p class="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto">
+        Learn topics step-by-step, test your knowledge with real-time quizzes, and execute JavaScript directly in the browser.
+      </p>
+    </section>
+
+    <!-- ADMIN CONTROLS PANEL -->
+    <section id="admin-panel" class="hidden bg-slate-900/90 border border-indigo-500/40 rounded-2xl p-6 shadow-2xl shadow-indigo-950/50 space-y-6">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+        <div class="flex items-center space-x-3">
+          <div class="p-2 bg-indigo-500/20 text-indigo-400 rounded-lg">
+            &#9881;
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-white">Admin Control Center</h2>
+            <p class="text-xs text-slate-400">Authenticated as: <span class="text-indigo-400 font-mono font-semibold">arya19</span></p>
+          </div>
+        </div>
+        <button onclick="logoutAdmin()" class="text-xs bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3 py-1.5 rounded-lg border border-red-500/20 font-semibold transition-all">
+          Logout Admin
+        </button>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- Add Module -->
+        <div class="space-y-3 bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+          <h3 class="font-semibold text-xs text-indigo-300 uppercase tracking-wider">Create New Module</h3>
+          <input id="new-module-title" type="text" placeholder="Module Title (e.g. Data Structures)" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors" />
+          <textarea id="new-module-desc" placeholder="Module Description" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors" rows="2"></textarea>
+          <button onclick="addModule()" class="w-full bg-indigo-600 hover:bg-indigo-500 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-md">
+            + Add Module
+          </button>
+        </div>
+
+        <!-- Add Question -->
+        <div class="space-y-3 bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+          <h3 class="font-semibold text-xs text-indigo-300 uppercase tracking-wider">Add Quiz Question</h3>
+          <select id="module-select" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors"></select>
+          <input id="new-q-text" type="text" placeholder="Question Text" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors" />
+          <input id="new-q-options" type="text" placeholder="Options (comma-separated)" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors" />
+          <input id="new-q-correct" type="number" min="0" placeholder="Correct Option Index (0 for 1st option)" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors" />
+          <button onclick="addQuestion()" class="w-full bg-indigo-600 hover:bg-indigo-500 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-md">
+            + Add Question
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODULES & TOPICS SECTION -->
+    <section id="modules" class="space-y-6">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <div>
+          <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-white">Learning Modules</h2>
+          <p class="text-xs text-slate-400">Select topics to explore core programming concepts</p>
+        </div>
+        <span id="module-count" class="text-xs bg-slate-900 border border-slate-800 px-3 py-1 rounded-full text-indigo-400 font-semibold"></span>
+      </div>
+      <div id="modules-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </section>
+
+    <!-- PRACTICE QUIZ SECTION -->
+    <section id="practice" class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 space-y-6">
+      <div class="border-b border-slate-800 pb-3">
+        <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-white">Practice Quizzes</h2>
+        <p class="text-xs text-slate-400">Test your comprehension with instant grading feedback</p>
+      </div>
+      <div id="quiz-container" class="space-y-8"></div>
+    </section>
+
+    <!-- FINAL CAPSTONE PROJECT SECTION -->
+    <section id="project" class="bg-slate-900/90 border border-indigo-500/30 rounded-2xl p-6 sm:p-8 space-y-6 shadow-2xl">
+      <div class="space-y-2 border-b border-slate-800 pb-4">
+        <div class="inline-block bg-indigo-500/10 text-indigo-400 text-xs font-semibold px-3 py-1 rounded-full border border-indigo-500/20">
+          Final Project Task
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Build a Calculator Function</h2>
+        <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">
+          Write a JavaScript function named <code class="bg-slate-950 px-2 py-0.5 rounded border border-slate-800 text-amber-400">calculator(a, b, operator)</code>. 
+          It must handle <code class="text-cyan-400">'+'</code>, <code class="text-cyan-400">'-'</code>, <code class="text-cyan-400">'*'</code>, and <code class="text-cyan-400">'/'</code>. 
+          Make sure it **throws an error** when invalid operators are passed or when attempting division by zero.
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-6">
+        <!-- Editor Column -->
+        <div class="space-y-3">
+          <div class="flex justify-between items-center text-xs text-slate-400 font-mono">
+            <span>index.js</span>
+            <span>JavaScript Runtime</span>
+          </div>
+          <textarea id="code-editor" class="w-full h-80 bg-slate-950 text-emerald-400 p-4 rounded-xl border border-slate-800 focus:outline-none focus:border-indigo-500/80 resize-none shadow-inner custom-scrollbar text-xs sm:text-sm leading-relaxed" spellcheck="false">
+function calculator(a, b, operator) {
+  if (typeof a !== 'number' || typeof b !== 'number') {
+    throw new Error("Inputs must be numbers!");
+  }
+  
+  switch(operator) {
+    case '+': return a + b;
+    case '-': return a - b;
+    case '*': return a * b;
+    case '/':
+      if (b === 0) throw new Error("Division by zero is not allowed!");
+      return a / b;
+    default:
+      throw new Error("Invalid operator provided!");
+  }
+}
+
+// --- Execution & Test Cases ---
+console.log("5 + 3 =", calculator(5, 3, '+'));
+console.log("10 / 2 =", calculator(10, 2, '/'));
+
+// Uncomment line below to test error throwing:
+// console.log(calculator(10, 0, '/'));
+</textarea>
+          <button onclick="runCode()" class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-98 text-white font-bold py-3 rounded-xl shadow-lg shadow-emerald-600/20 border border-emerald-400/30 transition-all flex items-center justify-center space-x-2">
+            <span>Execute Code</span>
+            <span>&#9658;</span>
+          </button>
+        </div>
+
+        <!-- Terminal Output Column -->
+        <div class="space-y-3 flex flex-col">
+          <div class="flex justify-between items-center text-xs text-slate-400 font-mono">
+            <span>Console Terminal</span>
+            <button onclick="clearTerminal()" class="hover:text-slate-200 transition-colors">Clear Console</button>
+          </div>
+          <div id="terminal-output" class="flex-1 min-h-[320px] bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs overflow-y-auto custom-scrollbar space-y-2">
+            <span class="text-slate-600">// Click "Execute Code" to view output or errors...</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-900 py-6 text-center text-xs text-slate-500">
+    <p>DevAcademy Platform &bull; Built with HTML5, Tailwind CSS, and JavaScript</p>
+  </footer>
+
+  <!-- AUTHENTICATION MODAL -->
+  <div id="auth-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center hidden z-50 p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md space-y-5 shadow-2xl">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-base text-white">Admin Authentication</h3>
+        <button onclick="toggleAuthModal()" class="text-slate-400 hover:text-white text-xl leading-none">&times;</button>
+      </div>
+      <form onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">Username</label>
+          <input id="login-username" type="text" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-indigo-500" required />
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">Password</label>
+          <input id="login-password" type="password" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-indigo-500" required />
+        </div>
+        <div id="login-error" class="hidden text-xs bg-red-500/10 border border-red-500/20 text-red-400 p-2.5 rounded-lg">
+          Invalid username or password!
+        </div>
+        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 rounded-lg text-sm shadow-lg shadow-indigo-600/30 transition-all">
+          Sign In as Admin
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // GLOBAL STATE
+    let state = {
+      isAdmin: false,
+      modules: [
+        {
+          id: "m1",
+          title: "JavaScript Fundamentals",
+          description: "Variables, functions, data structures, and foundational scope logic.",
+          questions: [
+            { q: "Which keyword declares a block-scoped variable?", options: ["var", "let", "global", "def"], correct: 1 },
+            { q: "What is the output of typeof NaN?", options: ["number", "NaN", "undefined", "object"], correct: 0 },
+            { q: "Which array method appends an element to the end?", options: ["unshift()", "push()", "pop()", "append()"], correct: 1 }
+          ]
+        },
+        {
+          id: "m2",
+          title: "DOM & Event Handling",
+          description: "Interacting with page elements, handling clicks, and processing form submissions.",
+          questions: [
+            { q: "Which method selects an element by its ID?", options: ["querySelector()", "getElementById()", "getElement()", "findId()"], correct: 1 },
+            { q: "What event triggers on form submission?", options: ["submit", "click", "change", "load"], correct: 0 }
+          ]
+        },
+        {
+          id: "m3",
+          title: "Error Handling & Functions",
+          description: "Managing exceptions using try/catch blocks and creating dynamic execution scope.",
+          questions: [
+            { q: "Which block executes regardless of error outcomes?", options: ["try", "catch", "finally", "error"], correct: 2 },
+            { q: "How do you throw a custom error in JavaScript?", options: ["throw new Error('msg')", "raise Error('msg')", "return Error('msg')", "catch('msg')"], correct: 0 }
+          ]
+        }
+      ]
+    };
+
+    // RENDER FUNCTIONS
+    function renderModules() {
+      const grid = document.getElementById('modules-grid');
+      const select = document.getElementById('module-select');
+      document.getElementById('module-count').innerText = `${state.modules.length} Topics`;
+
+      grid.innerHTML = '';
+      select.innerHTML = '';
+
+      state.modules.forEach(m => {
+        // Render module cards
+        const card = document.createElement('div');
+        card.className = "bg-slate-900/60 border border-slate-800 p-5 rounded-xl flex flex-col justify-between hover:border-indigo-500/40 transition-all shadow-sm";
+        card.innerHTML = `
+          <div>
+            <h3 class="font-bold text-base text-indigo-300 mb-1.5">${m.title}</h3>
+            <p class="text-xs text-slate-400 leading-relaxed mb-4">${m.description}</p>
+          </div>
+          <div class="flex justify-between items-center border-t border-slate-800/80 pt-3">
+            <span class="text-[11px] text-slate-500">${m.questions.length} Quiz Questions</span>
+            ${state.isAdmin ? `<button onclick="deleteModule('${m.id}')" class="text-xs text-red-400 hover:text-red-300 font-semibold">Delete</button>` : ''}
+          </div>
+        `;
+        grid.appendChild(card);
+
+        // Populate admin dropdown options
+        const opt = document.createElement('option');
+        opt.value = m.id;
+        opt.innerText = m.title;
+        select.appendChild(opt);
+      });
+
+      renderQuiz();
+    }
+
+    function renderQuiz() {
+      const quizContainer = document.getElementById('quiz-container');
+      quizContainer.innerHTML = '';
+
+      state.modules.forEach(m => {
+        if (m.questions.length === 0) return;
+
+        const modSection = document.createElement('div');
+        modSection.className = "space-y-4";
+        modSection.innerHTML = `<h3 class="text-base font-bold text-indigo-400 border-b border-slate-800 pb-2">${m.title}</h3>`;
+
+        m.questions.forEach((q, idx) => {
+          const qBox = document.createElement('div');
+          qBox.className = "bg-slate-950/60 p-4 rounded-xl border border-slate-800 space-y-3";
+          qBox.innerHTML = `
+            <p class="text-xs sm:text-sm font-medium text-slate-200">${idx + 1}. ${q.q}</p>
+            <div class="grid sm:grid-cols-2 gap-2">
+              ${q.options.map((opt, oIdx) => `
+                <button onclick="checkAnswer(this, ${oIdx === q.correct})" class="text-left text-xs bg-slate-900 hover:bg-slate-800 p-2.5 rounded-lg border border-slate-800 transition-all">
+                  ${opt}
+                </button>
+              `).join('')}
+            </div>
+          `;
+          modSection.appendChild(qBox);
+        });
+
+        quizContainer.appendChild(modSection);
+      });
+    }
+
+    function checkAnswer(btn, isCorrect) {
+      if (isCorrect) {
+        btn.className = "text-left text-xs bg-emerald-950/60 border-emerald-500 text-emerald-300 p-2.5 rounded-lg border font-bold";
+      } else {
+        btn.className = "text-left text-xs bg-red-950/60 border-red-500 text-red-300 p-2.5 rounded-lg border font-bold";
+      }
+    }
+
+    // AUTH ACTIONS
+    function toggleAuthModal() {
+      document.getElementById('auth-modal').classList.toggle('hidden');
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const u = document.getElementById('login-username').value;
+      const p = document.getElementById('login-password').value;
+
+      if (u === 'arya19' && p === 'mane11111') {
+        state.isAdmin = true;
+        document.getElementById('admin-panel').classList.remove('hidden');
+        document.getElementById('admin-badge').classList.remove('hidden');
+        document.getElementById('admin-badge').classList.add('flex');
+        document.getElementById('auth-btn').innerText = 'Admin Active';
+        document.getElementById('auth-btn').onclick = null;
+        document.getElementById('login-error').classList.add('hidden');
+        toggleAuthModal();
+        renderModules();
+      } else {
+        document.getElementById('login-error').classList.remove('hidden');
+      }
+    }
+
+    function logoutAdmin() {
+      state.isAdmin = false;
+      document.getElementById('admin-panel').classList.add('hidden');
+      document.getElementById('admin-badge').classList.add('hidden');
+      document.getElementById('admin-badge').classList.remove('flex');
+      const authBtn = document.getElementById('auth-btn');
+      authBtn.innerText = 'Admin Login';
+      authBtn.onclick = toggleAuthModal;
+      renderModules();
+    }
+
+    // ADMIN MANAGEMENT
+    function addModule() {
+      const title = document.getElementById('new-module-title').value;
+      const desc = document.getElementById('new-module-desc').value;
+      if (!title) return;
+
+      state.modules.push({
+        id: 'm_' + Date.now(),
+        title: title,
+        description: desc || 'No description provided.',
+        questions: []
+      });
+
+      document.getElementById('new-module-title').value = '';
+      document.getElementById('new-module-desc').value = '';
+      renderModules();
+    }
+
+    function deleteModule(id) {
+      state.modules = state.modules.filter(m => m.id !== id);
+      renderModules();
+    }
+
+    function addQuestion() {
+      const modId = document.getElementById('module-select').value;
+      const qText = document.getElementById('new-q-text').value;
+      const optionsRaw = document.getElementById('new-q-options').value;
+      const correctIdx = parseInt(document.getElementById('new-q-correct').value);
+
+      if (!qText || !optionsRaw || isNaN(correctIdx)) return;
+
+      const mod = state.modules.find(m => m.id === modId);
+      if (mod) {
+        mod.questions.push({
+          q: qText,
+          options: optionsRaw.split(',').map(s => s.trim()),
+          correct: correctIdx
+        });
+        renderModules();
+      }
+
+      document.getElementById('new-q-text').value = '';
+      document.getElementById('new-q-options').value = '';
+      document.getElementById('new-q-correct').value = '';
+    }
+
+    // CODING SANDBOX / TERMINAL LOGIC
+    function runCode() {
+      const code = document.getElementById('code-editor').value;
+      const terminal = document.getElementById('terminal-output');
+      terminal.innerHTML = '';
+
+      // Intercept console logging
+      const logs = [];
+      const originalLog = console.log;
+      console.log = function(...args) {
+        logs.push(args.map(a => (typeof a === 'object' ? JSON.stringify(a) : a)).join(' '));
+        originalLog.apply(console, args);
+      };
+
+      try {
+        const result = new Function(code)();
+        logs.forEach(log => appendTerminalLog(log, 'info'));
+        if (result !== undefined) {
+          appendTerminalLog(`Return value: ${result}`, 'success');
+        }
+      } catch (err) {
+        logs.forEach(log => appendTerminalLog(log, 'info'));
+        appendTerminalLog(`Error caught: ${err.message}`, 'error');
+      } finally {
+        console.log = originalLog;
+      }
+    }
+
+    function appendTerminalLog(msg, type) {
+      const terminal = document.getElementById('terminal-output');
+      const line = document.createElement('div');
+      
+      if (type === 'error') {
+        line.className = "text-red-400 bg-red-950/40 p-2 rounded border border-red-800/40 font-semibold";
+      } else if (type === 'success') {
+        line.className = "text-emerald-400 font-semibold";
+      } else {
+        line.className = "text-slate-300";
+      }
+
+      line.innerText = msg;
+      terminal.appendChild(line);
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    function clearTerminal() {
+      document.getElementById('terminal-output').innerHTML = '<span class="text-slate-600">// Console output cleared...</span>';
+    }
+
+    // INITIALIZATION
+    renderModules();
+  </script>
+</body>
+</html>
